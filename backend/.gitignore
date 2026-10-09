@@ -1,0 +1,9 @@
+/vendor/
+.env
+.env.local
+.env.*
+!.env.example
+/config/firebase/credentials.json
+/public/uploads/*
+!/public/uploads/.gitkeep
+.phpunit.result.cache

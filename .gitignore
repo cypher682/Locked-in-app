@@ -1,0 +1,45 @@
+# IDE / editors
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Environment & secrets
+.env
+.env.local
+.env.production
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Firebase configuration (contains API keys / service-account private key)
+backend/config/firebase/credentials.json
+mobile/android/app/google-services.json
+mobile/ios/Runner/GoogleService-Info.plist
+
+# PHP dependencies
+backend/vendor/
+backend/composer.lock
+
+# Flutter / Dart
+mobile/.dart_tool/
+mobile/.packages
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/build/
+*.apk
+*.aab
+*.ipa
+
+# Temp files
+*.tmp
+*.temp
+*.bak

@@ -1,0 +1,81 @@
+name: CI - Lint & Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # Mobile (Flutter) Checks
+  mobile-ci:
+    name: Flutter Lint & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./mobile
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Analyze Code
+        run: flutter analyze --no-fatal-infos
+        continue-on-error: false
+
+      - name: Check Formatting (Warning Only)
+        run: |
+          dart format --output=none . 2>&1 || true
+          echo "Note: Run 'dart format .' locally to fix formatting"
+        continue-on-error: true
+
+      - name: Run Tests
+        run: flutter test
+
+  # Backend (PHP) Checks
+  backend-ci:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, curl
+          tools: composer:v2
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish || true
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: PHP Syntax Check
+        run: |
+          echo "Checking PHP syntax..."
+          find src -name "*.php" -print0 | xargs -0 -n1 php -l
+          echo "Syntax check complete"
+
+      - name: Run Tests
+        run: |
+          if [ -f vendor/bin/phpunit ]; then
+            vendor/bin/phpunit
+          else
+            echo "PHPUnit not installed - skipping tests"
+          fi
+        continue-on-error: true
